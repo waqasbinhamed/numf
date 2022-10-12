@@ -1,5 +1,4 @@
 import numpy as np
-import pandas as pd
 from scipy.signal import find_peaks
 
 
@@ -7,7 +6,7 @@ def get_neighbors(locs, m, nrad=2):
     vals = set()
     for i in locs:
         vals = vals.union(range(i - nrad, i + nrad + 1))
-    return vals.intersection(range(0, m))
+    return list(vals.intersection(range(0, m)))
 
 
 def get_peaks(M, nrad=2):
