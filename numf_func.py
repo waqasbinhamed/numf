@@ -103,6 +103,5 @@ def numf(M, W, H, iters=100, peak_vals=None):
 
             # updating wi
             W[:, i] = update_wi(Mi, hi, m, peak_vals=peak_vals)
-        print(it, np.linalg.norm(M - W @ H, 'fro') / np.linalg.norm(M, 'fro'))
     return W, H
 
