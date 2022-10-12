@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.signal import find_peaks
+import pandas as pd
 
 np.random.seed(42)
 
@@ -63,11 +64,13 @@ def update_wi(Mi, hi, m, pvals=None, l2=0):
     for p in pvals:
         # creating Up matrix
         Up = create_Up(m, p)
-
-        Q = (np.linalg.norm(hi) ** 2) * (np.linalg.inv(Up).T @ np.linalg.inv(Up)) + \
-            l2 * ((create_D(m) @ np.linalg.inv(Up)).T @ (create_D(m) @ np.linalg.inv(Up)))
-        _p = np.linalg.inv(Up).T @ (Mi @ hi.T)
-        b = np.linalg.inv(Up).T @ np.ones((m, 1))
+        invUp = np.linalg.inv(Up)
+        Q = (np.linalg.norm(hi) ** 2) * (invUp.T @ invUp)
+        if l2 != 0:
+            D = create_D(m)
+            Q = Q + l2 * ((D @ invUp).T @ (D @ invUp))
+        _p = invUp.T @ (Mi @ hi.T)
+        b = invUp.T @ np.ones((m, 1))
 
         # accelerated projected gradient
         ynew = apg(Q, _p, b, m)
@@ -75,7 +78,7 @@ def update_wi(Mi, hi, m, pvals=None, l2=0):
         score = 0.5 * np.dot((Q @ ynew).T, ynew) - np.dot(_p.T, ynew)
         if score < min_score:
             min_score = score
-            wmin = np.linalg.inv(Up) @ ynew
+            wmin = invUp @ ynew
     return wmin.reshape(m, )
 
 
@@ -83,11 +86,11 @@ def apg(Q, _p, b, m):
     """Runs acceraled projected gradient."""
     k = 1
     yhat = ynew = y = np.random.rand(m, 1)
-    while np.linalg.norm(ynew - y) > 1e-8 or k == 1:
+    while (np.linalg.norm(ynew - y) > 1e-8 or k == 1) and k <= 100:  # temporary
         y = ynew
         z = yhat - (Q @ yhat - _p) / (np.linalg.norm(Q, ord=2) + 1e-8)
-        idx = np.argsort(z / b, 0)
         # TODO: check nu solution
+        # idx = np.argsort(z / b, 0)
         # nu = np.max((np.cumsum(z[idx] * b[idx]) - 1) / np.cumsum(b[idx] * b[idx]))
         # TODO: try alternate optimization methods
         nu = np.max((np.cumsum(z * b) - 1) / np.cumsum(b * b))
@@ -118,7 +121,7 @@ def update_hi(Mi, wi, n):
     return hi.reshape(1, n)
 
 
-def main():
+def toy_example():
     def gauss(x, sigma=1, mean=0, scale=1):
         return scale * np.exp(-np.square(x - mean) / (2 * sigma ** 2))
 
@@ -145,12 +148,20 @@ def main():
                       [0, 1 - c - e, c + e]]).T
 
     M = Wtrue @ Htrue
+    return M, Wtrue, Htrue
 
+
+def main():
+    df = pd.read_csv('cases.csv')
+    M = df['cases'].to_numpy().reshape(-1, 1)
+    r = 16
+
+    m, n = M.shape
     W0 = np.random.rand(m, r)
     H0 = np.random.rand(r, n)
 
-    pvals = get_neighbors([p1, p2, p3], m, 1)
-    (W, H) = numf(M, W0, H0, pvals, iters=5)
+    pvals = get_peaks(M, nrad=1)
+    W, H = numf(M, W0, H0, iters=1, pvals=pvals)
 
 
 if __name__ == '__main__':
