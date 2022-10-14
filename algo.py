@@ -33,7 +33,7 @@ def get_peaks(M, nrad=2):
     return get_neighbors(all_peaks, m, nrad=nrad)
 
 
-def numf(M, W, H, pvals=None, l2=0, iters=100, save_file=None):
+def numf(M, W, H, pvals=None, l2=0, iters=10, save_file=None):
     """Runs the NuMF algorithm to decompose the M vector into unimodal peaks."""
     (m, n) = M.shape
     r = W.shape[1]  # rank
@@ -72,7 +72,8 @@ def update_wi(Mi, hi, m, pvals=None, l2=0):
         Q = (np.linalg.norm(hi) ** 2) * (invUp.T @ invUp)
         if l2 != 0:
             D = create_D(m)
-            Q = Q + l2 * ((D @ invUp).T @ (D @ invUp))
+            tmp = D @ invUp
+            Q = Q + l2 * (tmp.T @ tmp)
         _p = invUp.T @ (Mi @ hi.T)
         b = invUp.T @ np.ones((m, 1))
 
@@ -90,19 +91,26 @@ def apg(Q, _p, b, m):
     """Runs acceraled projected gradient."""
     k = 1
     yhat = ynew = y = np.random.rand(m, 1)
-    while (np.linalg.norm(ynew - y) > 1e-8 or k == 1) and k <= 100:  # temporary
+    while np.linalg.norm(ynew - y) > 1e-3 or k == 1:  # temporary
         y = ynew
         z = yhat - (Q @ yhat - _p) / (np.linalg.norm(Q, ord=2) + 1e-8)
-        # TODO: check nu solution
-        # idx = np.argsort(z / b, 0)
-        # nu = np.max((np.cumsum(z[idx] * b[idx]) - 1) / np.cumsum(b[idx] * b[idx]))
+        nu = calculate_nu(b, z)
         # TODO: try alternate optimization methods
-        nu = np.max((np.cumsum(z * b) - 1) / np.cumsum(b * b))
         ynew = z - nu * b
         ynew[ynew < 0] = 0
         yhat = ynew + ((k - 1) / (k + 2)) * (ynew - y)
         k += 1
     return ynew
+
+
+def calculate_nu(b, z):
+    nz_idx = b >= 0
+    nzb = b[nz_idx]
+    nzz = z[nz_idx]
+
+    idx = np.argsort(-nzz / nzb, 0)
+    return np.max((np.cumsum(nzz[idx] * nzb[idx]) - 1) / np.cumsum(nzb[idx] * nzb[idx]))
+
 
 
 def create_Up(m, p):
@@ -156,7 +164,7 @@ def toy_example():
 
 
 def main():
-    df = pd.read_csv('cases.csv')
+    df = pd.read_csv('data/cases.csv')
     M = df['cases'].to_numpy().reshape(-1, 1)
     r = 16
 
