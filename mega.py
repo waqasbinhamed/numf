@@ -18,7 +18,7 @@ def get_neighbors(locs, m, nrad=2):
     """Returns a list containing integers close to integers in locs list."""
     vals = set()
     for i in locs:
-        vals = vals.union(range(i - nrad, i + nrad + 1))
+        vals = vals.union(range(i - nrad, i + nrad + 1, 2))
     return list(vals.intersection(range(0, m)))
 
 
@@ -28,12 +28,12 @@ def get_peaks(M, nrad=2):
     all_peaks = list()
     for j in range(n):
         # TODO: find best parameters
-        peaks, _ = find_peaks(x=M[:, j].reshape(m, ), prominence=1, width=10)
+        peaks, _ = find_peaks(x=M.reshape(m, ), prominence=1, width=6)
         all_peaks.extend(peaks)
     return get_neighbors(all_peaks, m, nrad=nrad)
 
 
-def numf(M, W, H, pvals=None, l2=0, iters=100):
+def numf(M, W, H, pvals=None, l2=0, iters=100, save_file=None):
     """Runs the NuMF algorithm to decompose the M vector into unimodal peaks."""
     (m, n) = M.shape
     r = W.shape[1]  # rank
@@ -51,6 +51,10 @@ def numf(M, W, H, pvals=None, l2=0, iters=100):
             # updating wi
             W[:, i] = update_wi(Mi, hi, m, pvals, l2)
         print(it, np.linalg.norm(M - W @ H, 'fro') / np.linalg.norm(M, 'fro'))
+        if save_file is not None:
+            with open(save_file, 'wb') as fout:
+                np.savez_compressed(fout, W=W, H=H)
+            print(f'W and H matrices saved in {save_file}.')
     return W, H
 
 
