@@ -28,7 +28,7 @@ def get_peaks(M, nrad=2):
     all_peaks = list()
     for j in range(n):
         # TODO: find best parameters
-        peaks, _ = find_peaks(x=M.reshape(m, ), prominence=1, width=6)
+        peaks, _ = find_peaks(x=M[:, j].reshape(m, ), prominence=1, width=6)
         all_peaks.extend(peaks)
     return get_neighbors(all_peaks, m, nrad=nrad)
 
@@ -77,7 +77,8 @@ def update_wi(Mi, hi, m, pvals=None, l2=0):
         if l2 != 0:
             D = create_D(m)
             tmp = D @ invUp
-            Q = Q + l2 * (tmp.T @ tmp)
+            tmp2 = tmp.T @ tmp
+            Q = Q + l2 * (np.linalg.norm(Q, 'fro') / np.linalg.norm(tmp2, 'fro')) * tmp2
         _p = invUp.T @ (Mi @ hi.T)
         b = invUp.T @ np.ones((m, 1))
 
@@ -96,7 +97,7 @@ def apg(Q, _p, b, m, itermax=100):
     """Runs acceraled projected gradient."""
     k = 1
     yhat = ynew = y = np.random.rand(m, 1)
-    while (np.linalg.norm(ynew - y) > 1e-8 or k == 1) and k < itermax:  # temporary
+    while (np.linalg.norm(ynew - y) > 1e-3 or k == 1) and k < itermax:  # temporary
         y = ynew
         z = yhat - (Q @ yhat - _p) / (np.linalg.norm(Q, ord=2) + 1e-8)
         nu = calculate_nu(b, z)
@@ -115,7 +116,6 @@ def calculate_nu(b, z):
 
     idx = np.argsort(-nzz / nzb, 0)
     return np.max((np.cumsum(nzz[idx] * nzb[idx]) - 1) / np.cumsum(nzb[idx] * nzb[idx]))
-
 
 
 def create_Up(m, p):
@@ -165,20 +165,23 @@ def toy_example():
                       [0, 1 - c - e, c + e]]).T
 
     M = Wtrue @ Htrue
-    return M, Wtrue, Htrue
+    ptrue = [p1, p2, p3]
+    return M, Wtrue, Htrue, ptrue
 
 
 def main():
-    df = pd.read_csv('data/cases.csv')
-    M = df['cases'].to_numpy().reshape(-1, 1)
-    r = 16
+    # df = pd.read_csv('data/cases.csv')
+    # M = df['cases'].to_numpy().reshape(-1, 1)
+    r = 3
+    M, Wtrue, Htrue, ptrue = toy_example()
 
     m, n = M.shape
     W0 = np.random.rand(m, r)
     H0 = np.random.rand(r, n)
 
-    pvals = get_peaks(M, nrad=1)
-    W, H, _ = numf(M, W0, H0, iters=1, pvals=pvals)
+    # pvals = get_peaks(M, nrad=2)
+    pvals = get_neighbors(ptrue, m, nrad=2)
+    W, H, _ = numf(M, W0, H0, pvals=pvals, l2=0.1, iters=50)
 
 
 if __name__ == '__main__':
