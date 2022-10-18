@@ -51,6 +51,9 @@ def update_wi(Mi, wi, hi, m, pvals=None, l2=0):
     min_score = np.Inf
     min_p = 0
 
+    hi_norm = np.linalg.norm(hi) ** 2
+    Mhi = Mi @ hi.T
+
     if pvals is None:
         pvals = range(1, m, 2)  # trying all p values
 
@@ -58,13 +61,13 @@ def update_wi(Mi, wi, hi, m, pvals=None, l2=0):
         # creating Up matrix
         Up = create_Up(m, p)
         invUp = np.linalg.inv(Up)
-        Q = (np.linalg.norm(hi) ** 2) * (invUp.T @ invUp)
+        Q = hi_norm * (invUp.T @ invUp)
         if l2 != 0:
             D = create_D(m)
             tmp = D @ invUp
             tmp2 = tmp.T @ tmp
             Q = Q + l2 * (np.linalg.norm(Q, 'fro') / np.linalg.norm(tmp2, 'fro')) * tmp2
-        _p = invUp.T @ (Mi @ hi.T)
+        _p = invUp.T @ Mhi
         b = invUp.T @ np.ones((m, 1))
 
         # accelerated projected gradient
@@ -78,14 +81,14 @@ def update_wi(Mi, wi, hi, m, pvals=None, l2=0):
     return wmin.reshape(m, ), min_p
 
 
-def apg(y0, Q, _p, b, itermax=50):
+def apg(y, Q, _p, b, itermax=50):
     """Runs acceraled projected gradient."""
     k = 1
-    yhat = ynew = y0
-    # while (np.linalg.norm(ynew - y) > 1e-3 or k == 1) and k < itermax:  # temporary
-    while k < itermax:  # temporary
+    yhat = ynew = y
+    norm_Q = np.linalg.norm(Q, ord=2)
+    while (np.linalg.norm(ynew - y) > 1e-3 or k == 1) and k < itermax:  # temporary
         y = ynew
-        z = yhat - (Q @ yhat - _p) / (np.linalg.norm(Q, ord=2) + 1e-8)
+        z = yhat - (Q @ yhat - _p) / norm_Q
         nu = calculate_nu(b, z)
         # TODO: try alternate optimization methods
         ynew = z - nu * b

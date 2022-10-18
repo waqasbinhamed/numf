@@ -45,7 +45,7 @@ def main():
     W0 = np.random.rand(m, r)
     H0 = np.random.rand(r, n)
 
-    pvals = get_neighbors(ptrue, m, nrad=2)
+    pvals = get_neighbors(ptrue, m, nrad=4)
     W, H, _ = numf(M, W0, H0, pvals=pvals, iters=20)
 
 
