@@ -8,14 +8,14 @@ def numf(M, W, H, pvals=None, l2=0, iters=10, save_file=None):
     (m, n) = M.shape
     r = W.shape[1]  # rank
 
-    for it in range(iters):
+    for it in range(1, iters + 1):
         pouts = numf_it(H, M, W, l2, m, n, pvals, r)
         score = np.linalg.norm(M - W @ H, 'fro') / np.linalg.norm(M, 'fro')
         print(score)
-        if save_file is not None and ((it + 1) % 5 == 0 or it + 1 == iters):
+        if save_file is not None and (it % 5 == 0 or it == iters):
             with open(save_file, 'wb') as fout:
                 np.savez_compressed(fout, W=W, H=H, pouts=pouts)
-            print(f'W and H matrices saved in {save_file}.')
+            print(f'W and H matrices saved in {save_file} in {it} iterations.')
     return W, H, pouts
 
 
