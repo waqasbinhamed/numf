@@ -4,11 +4,6 @@ np.random.seed(42)
 
 
 def numf(M, W, H, pvals=None, l2=0, iters=10, save_file=None):
-    min_W = W.copy()
-    min_H = H.copy()
-    min_pouts = np.array(pvals)
-    min_score = np.Inf
-
     """Runs the NuMF algorithm to decompose the M vector into unimodal peaks."""
     (m, n) = M.shape
     r = W.shape[1]  # rank
@@ -17,24 +12,21 @@ def numf(M, W, H, pvals=None, l2=0, iters=10, save_file=None):
         pouts = numf_it(H, M, W, l2, m, n, pvals, r)
         score = np.linalg.norm(M - W @ H, 'fro') / np.linalg.norm(M, 'fro')
         print(score)
-        if score < min_score:
-            min_W = W
-            min_H = H
-            min_pouts = pouts
         if save_file is not None and ((it + 1) % 5 == 0 or it + 1 == iters):
             with open(save_file, 'wb') as fout:
-                np.savez_compressed(fout, W=min_W, H=min_H, pouts=min_pouts)
+                np.savez_compressed(fout, W=W, H=H, pouts=pouts)
             print(f'W and H matrices saved in {save_file}.')
-    return min_W, min_H, min_pouts
+    return W, H, pouts
 
 
 def numf_it(H, M, W, l2, m, n, pvals, r):
     pouts = list()
+    Mi = M - W @ H
     for i in range(r):
         wi = W[:, i].reshape(m, 1)
         hi = H[i, :].reshape(1, n)
 
-        Mi = M - W @ H + wi @ hi
+        Mi = Mi + wi @ hi
 
         # updating hi
         H[i, :] = update_hi(Mi, wi, n)
@@ -42,6 +34,8 @@ def numf_it(H, M, W, l2, m, n, pvals, r):
         # updating wi
         W[:, i], pout = update_wi(Mi, wi, hi, m, pvals, l2)
         pouts.append(pout)
+
+        Mi = Mi - wi @ hi
     return pouts
 
 
