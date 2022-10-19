@@ -3,19 +3,18 @@ from utils import create_D, create_Up
 np.random.seed(42)
 
 
-def numf(M, W, H, pvals=None, l2=0, iters=10, save_file=None):
+def numf(M, W, H, pvals=None, l2=0, iters=100, save_file=None):
     """Runs the NuMF algorithm to decompose the M vector into unimodal peaks."""
     (m, n) = M.shape
     r = W.shape[1]  # rank
 
     for it in range(1, iters + 1):
         pouts = numf_it(H, M, W, l2, m, n, pvals, r)
-        score = np.linalg.norm(M - W @ H, 'fro') / np.linalg.norm(M, 'fro')
-        print(score)
         if save_file is not None and (it % 5 == 0 or it == iters):
             with open(save_file, 'wb') as fout:
                 np.savez_compressed(fout, W=W, H=H, pouts=pouts)
             print(f'W and H matrices saved in {save_file} in {it} iterations.')
+            print(np.linalg.norm(M - W @ H, 'fro') / np.linalg.norm(M, 'fro'))
     return W, H, pouts
 
 
@@ -75,7 +74,7 @@ def update_wi(Mi, wi, hi, m, pvals=None, l2=0):
     return wmin.reshape(m, ), min_p
 
 
-def apg(y, Q, _p, b, itermax=50):
+def apg(y, Q, _p, b, itermax=100):
     """Runs acceraled projected gradient."""
     k = 1
     yhat = ynew = y
