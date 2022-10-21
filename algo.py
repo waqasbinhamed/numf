@@ -81,7 +81,7 @@ def apg(y, Q, _p, b, itermax=100):
     norm_Q = np.linalg.norm(Q, ord=2)
     while (np.linalg.norm(ynew - y) > 1e-3 or k == 1) and k < itermax:  # temporary
         y = ynew
-        z = yhat - (Q @ yhat - _p) / norm_Q
+        z = yhat - (Q @ yhat - _p) / (norm_Q + 1e-16)
         nu = calculate_nu(b, z)
         # TODO: try alternate optimization methods
         ynew = z - nu * b
