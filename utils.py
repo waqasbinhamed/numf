@@ -18,3 +18,8 @@ def create_D(m):
     D[i == j] = -1
     D[i == j - 1] = 1
     return D
+
+
+def initialize_matrices(m, n, r):
+    """Initializes W(m, r) and H(r, n) matrices."""
+    return np.random.rand(m, r), np.random.rand(r, n)

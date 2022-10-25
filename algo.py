@@ -10,11 +10,12 @@ def numf(M, W, H, pvals=None, l2=0, iters=100, save_file=None):
 
     for it in range(1, iters + 1):
         pouts = numf_it(H, M, W, l2, m, n, pvals, r)
-        if save_file is not None and (it % 5 == 0 or it == iters):
-            with open(save_file, 'wb') as fout:
-                np.savez_compressed(fout, W=W, H=H, pouts=pouts)
-            print(f'W and H matrices saved in {save_file} in {it} iterations.')
+        if it % 5 == 0 or it == iters:
             print(np.linalg.norm(M - W @ H, 'fro') / np.linalg.norm(M, 'fro'))
+            if save_file is not None:
+                with open(save_file, 'wb') as fout:
+                    np.savez_compressed(fout, W=W, H=H, pouts=pouts)
+                print(f'W and H matrices saved in {save_file} in {it} iterations.')
     return W, H, pouts
 
 
