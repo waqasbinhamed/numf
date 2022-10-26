@@ -1,11 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="19d2399d-36eb-4fdf-a4c3-e686457f24a3" name="Changes" comment="" />
+    <list default="true" id="19d2399d-36eb-4fdf-a4c3-e686457f24a3" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Canada COVID Test.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/notebooks/Canada COVID Test.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EDA.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/notebooks/EDA.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Isolated province and variants test.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/notebooks/Isolated province and variants test.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/NuMF Canada Results.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/notebooks/NuMF Canada Results.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/notebooks/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Toy Example.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/notebooks/Toy Example.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/algo.py" beforeDir="false" afterPath="$PROJECT_DIR$/numf/numf.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/multigrid.py" beforeDir="false" afterPath="$PROJECT_DIR$/numf/multigrid.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/peaks.py" beforeDir="false" afterPath="$PROJECT_DIR$/numf/peaks.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/toy_example.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/numf/utils.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -22,9 +43,18 @@
   "keyToString": {
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "last_opened_file_path": "C:/Users/wbhamed/Desktop/numf"
+    "WebServerToolWindowFactoryState": "false",
+    "last_opened_file_path": "/Users/waqas/Desktop/research/code/numf",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/notebooks" />
+      <recent name="$PROJECT_DIR$/unstructured" />
+      <recent name="$PROJECT_DIR$/core" />
+    </key>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -33,8 +63,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1666130000711</updated>
+      <workItem from="1666745999716" duration="2248000" />
     </task>
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">

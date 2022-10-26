@@ -1,0 +1,2 @@
+-e git+https://github.com/waqasbinhamed/numf.git@43f24619fd26b0bdae39e2f8649f18a9976a8c6b#egg=numf
+numpy==1.23.4

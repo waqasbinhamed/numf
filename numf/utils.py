@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def create_Up(m, p):
     """Creates unimodal restriction matrix."""
     D = np.diag(np.ones(p + 1)) + np.diag(-1 * np.ones(p), -1)
@@ -10,6 +11,7 @@ def create_Up(m, p):
     else:
         Up = D
     return Up
+
 
 def create_D(m):
     """Creates a (m - 1, m) size first order difference matrix."""
