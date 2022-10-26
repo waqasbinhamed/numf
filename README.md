@@ -4,7 +4,7 @@ Python implementation of Nonnegative Unimodal Matrix Factorization (https://ieee
 
 ### Installation
 1. Clone repository.
-2. In main project directory named `numf` run `pip install -e .`
+2. In main project directory named `numf` run `pip install -r requirements.txt`
 
 ### Notes
 
