@@ -3,7 +3,7 @@ from numf.utils import create_D, create_Up
 np.random.seed(42)
 
 
-def numf(M, W, H, pvals=None, l2=0, iters=100, save_file=None):
+def numf(M, W, H, pvals=None, l2=0, iters=100, save_file=None, verbose=True):
     """Runs the NuMF algorithm to decompose the M vector into unimodal peaks."""
     (m, n) = M.shape
     r = W.shape[1]  # rank
@@ -11,11 +11,13 @@ def numf(M, W, H, pvals=None, l2=0, iters=100, save_file=None):
     for it in range(1, iters + 1):
         pouts = numf_it(H, M, W, l2, m, n, pvals, r)
         if it % 5 == 0 or it == iters:
-            print(np.linalg.norm(M - W @ H, 'fro') / np.linalg.norm(M, 'fro'))
+            if verbose:
+                print(f"Loss: {np.linalg.norm(M - W @ H, 'fro') / np.linalg.norm(M, 'fro')}")
             if save_file is not None:
                 with open(save_file, 'wb') as fout:
                     np.savez_compressed(fout, W=W, H=H, pouts=pouts)
-                print(f'W and H matrices saved in {save_file} in {it} iterations.')
+                if verbose:
+                    print(f'W and H matrices saved in {save_file} in {it} iterations.')
     return W, H, pouts
 
 
