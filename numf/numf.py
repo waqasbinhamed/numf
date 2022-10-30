@@ -3,13 +3,13 @@ from numf.utils import create_D, create_Up
 np.random.seed(42)
 
 
-def numf(M, W, H, pvals=None, l2=0, iters=100, save_file=None, verbose=True):
-    """Runs the NuMF algorithm to decompose the M vector into unimodal peaks."""
+def numf(M, W, H, pvals=None, l2=0, beta=0, iters=100, save_file=None, verbose=True):
+    """Runs the NuMF algorithm to factorize the M vector into unimodal peaks."""
     (m, n) = M.shape
     r = W.shape[1]  # rank
 
     for it in range(1, iters + 1):
-        pouts = numf_it(H, M, W, l2, m, n, pvals, r)
+        pouts = numf_it(H, M, W, l2, m, n, pvals, r, beta)
         if it % 5 == 0 or it == iters:
             if verbose:
                 print(f"Loss: {np.linalg.norm(M - W @ H, 'fro') / np.linalg.norm(M, 'fro')}")
@@ -21,7 +21,7 @@ def numf(M, W, H, pvals=None, l2=0, iters=100, save_file=None, verbose=True):
     return W, H, pouts
 
 
-def numf_it(H, M, W, l2, m, n, pvals, r):
+def numf_it(H, M, W, l2, m, n, pvals, r, beta):
     pouts = list()
     Mi = M - W @ H
     for i in range(r):
@@ -34,14 +34,14 @@ def numf_it(H, M, W, l2, m, n, pvals, r):
         H[i, :] = update_hi(Mi, wi, n)
 
         # updating wi
-        W[:, i], pout = update_wi(Mi, wi, hi, m, pvals, l2)
+        W[:, i], pout = update_wi(Mi, wi, hi, m, pvals, l2, beta)
         pouts.append(pout)
 
         Mi = Mi - wi @ hi
     return pouts
 
 
-def update_wi(Mi, wi, hi, m, pvals=None, l2=0):
+def update_wi(Mi, wi, hi, m, pvals=None, l2=0, beta=0):
     """Updates the value of w(i) column as part of BCD."""
     wmin = np.empty((m, 1))
     min_score = np.Inf
@@ -63,6 +63,9 @@ def update_wi(Mi, wi, hi, m, pvals=None, l2=0):
             tmp = D @ invUp
             tmp2 = tmp.T @ tmp
             Q = Q + l2 * (np.linalg.norm(Q, 'fro') / np.linalg.norm(tmp2, 'fro')) * tmp2
+        if beta != 0:
+            tmp3 = invUp.T @ invUp
+            Q = Q + beta * (np.linalg.norm(Q, 'fro') / np.linalg.norm(tmp3, 'fro')) * tmp3
         _p = invUp.T @ Mhi
         b = invUp.T @ np.ones((m, 1))
 
