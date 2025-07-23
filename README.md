@@ -1,12 +1,13 @@
 # NuMF
 
-Python implementation of Nonnegative Unimodal Matrix Factorization (https://ieeexplore.ieee.org/iel7/9413349/9413350/09414631.pdf).
+This repository provides a Python implementation of Nonnegative Unimodal Matrix Factorization (NuMF), for matrix factorization algorithm that enforces both nonnegativity and unimodality constraints on the factors. NuMF is particularly useful for applications where the underlying data is expected to have a single peak (unimodal structure) and nonnegative values, such as in signal processing, bioinformatics, and chemometrics.
 
-### Installation
-1. Clone repository.
-2. In main project directory named `numf` run `pip install -r requirements.txt`
+The implementation is based on the research paper ["Nonnegative Unimodal Matrix Factorization"](https://ieeexplore.ieee.org/iel7/9413349/9413350/09414631.pdf).
 
-### Notes
+## Installation
 
-- This package currently being developed. Apologizes for any bugs.
-- The `requirements.txt` does not contain packages needed to run the Jupyter Notebooks.
+1. Clone the repository.
+2. In the main project directory named `numf`, run:
+   ```bash
+   pip install -r requirements.txt
+   ```
