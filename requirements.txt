@@ -1,8 +1,5 @@
--e .
-numpy
-scipy
-
-# for running notebooks install the following packages
-# pandas
-# jupyter
-# matplotlib
+jupyter==1.1.1
+matplotlib==3.10.3
+numpy==2.3.1
+pandas==2.3.1
+scipy==1.16.0
