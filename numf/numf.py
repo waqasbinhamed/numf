@@ -12,7 +12,7 @@ def numf(
     beta: float = 0,
     iters: int = 100,
     save_file: str = None,
-    verbose: bool = True
+    verbose: bool = False
 ) -> tuple[np.ndarray, np.ndarray, list[int]]:
     """
     Run the NuMF algorithm to factorize M into W and H with unimodal constraints.
@@ -36,15 +36,16 @@ def numf(
 
     for it in range(1, iters + 1):
         pouts = numf_it(H, M, W, l2, m, n, pvals, r, beta)
-        if it % 5 == 0 or it == iters:
+        if it % 10 == 0:
             if verbose:
-                loss = np.linalg.norm(M - W @ H, 'fro') / np.linalg.norm(M, 'fro')
-                print(f"Loss: {loss}")
-            if save_file is not None:
-                with open(save_file, 'wb') as fout:
-                    np.savez_compressed(fout, W=W, H=H, pouts=pouts)
-                if verbose:
-                    print(f'W and H matrices saved in {save_file} after {it} iterations.')
+                loss = np.linalg.norm(M - W @ H, 'fro') / np.linalg.norm(M, 'fro') # Frobenius norm reconstruction error
+                print(f"Iteration {it:4d} | Loss: {loss:.6f}")
+    loss = np.linalg.norm(M - W @ H, 'fro') / np.linalg.norm(M, 'fro')            
+    print(f"Total Iteration {it:4d} | Final Loss: {loss:.6f}")            
+    if save_file is not None:
+        with open(save_file, 'wb') as fout:
+            np.savez_compressed(fout, W=W, H=H, pouts=pouts)
+            print(f'W and H matrices saved in {save_file} after {it} iterations.')
     return W, H, pouts
 
 def numf_it(
@@ -98,7 +99,7 @@ def update_wi(
         tuple: (updated wi, best peak index)
     """
     wmin = np.empty((m, 1))
-    min_score = np.Inf
+    min_score = np.inf
     min_p = 0
 
     hi_norm = np.linalg.norm(hi) ** 2
